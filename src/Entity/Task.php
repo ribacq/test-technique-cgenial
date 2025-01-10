@@ -57,6 +57,13 @@ class Task
         return $this->subtasks;
     }
 
+    public function addSubtask(string $subtask): self
+    {
+        $this->subtasks[] = $subtask;
+
+        return $this;
+    }
+
     // subtasks are counted in Task instead of TasksOrganizer since this is a very simple operation
     public function getSubtasksCount(): int
     {

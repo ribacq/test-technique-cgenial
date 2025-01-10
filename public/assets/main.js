@@ -70,10 +70,12 @@ taskForm.addEventListener('submit', (e) => {
             errorsNode.innerHTML += '<div>' + json.errors + '</div>';
             return;
         }
-        refreshTaskList(json.data.tasks);
+        tasks = json.data.tasks;
+        refreshTaskList();
     });
 });
 
+// sorting buttons click events
 document.querySelector('#task-sort-asc').addEventListener('click', () => refreshTaskList('asc'));
 document.querySelector('#task-sort-desc').addEventListener('click', () => refreshTaskList('desc'));
 
@@ -87,13 +89,16 @@ const dateTimeFormat = new Intl.DateTimeFormat('fr-FR', {
     minute: 'numeric',
 });
 
+// a function to refresh the entire task list
 const refreshTaskList = (sort) => {
+    // sort if asc or desc given
     if (sort === 'asc') {
-        tasks.sort((task1, task2) => task1.subtasks.length - task2.subtasks.length);
+        tasks.sort((task1, task2) => task1.subtasksCount - task2.subtasksCount);
     } else if (sort === 'desc') {
-        tasks.sort((task1, task2) => task2.subtasks.length - task1.subtasks.length);
+        tasks.sort((task1, task2) => task2.subtasksCount - task1.subtasksCount);
     }
 
+    // clear and repopulate task list
     tasksDiv.innerHTML = '';
     for (let i in tasks) {
         let task = tasks[i];
@@ -110,48 +115,101 @@ const refreshTaskList = (sort) => {
         taskTemplateAssignee.innerText = task.assignee;
         taskTemplateCreatedAt.innerText = dateTimeFormat.format(task.createdAt);
 
+        // manage subtask addition form
         let subtaskForm = taskTemplate.querySelector('form.subtask-form');
         let subtaskErrorsNode = taskTemplate.querySelector('.errors');
-        let subtaskCountElement = taskTemplate.querySelector('.subtask-count');
+        let subtasksCountElement = taskTemplate.querySelector('.subtask-count');
         let subtasksList = taskTemplate.querySelector('.subtasks-list');
         subtaskForm.addEventListener('submit', (evt) => {
             evt.preventDefault();
 
+            // get subtask text
             const subtask = subtaskForm.querySelector('input[name="subtask-label"]').value;
 
+            // error management
             subtaskErrorsNode.innerHTML = '';
             if (!subtask.length || subtask.length > 255) {
                 subtaskErrorsNode.innerHTML += '<div><strong>L\'intitulé</strong> est vide ou trop long (1-255 caractères)</div>';
                 return;
             }
 
+            // save subtask into global tasks object in accurate task[i]
             tasks[i].subtasks.push(subtask);
-            subtaskForm.reset();
 
-            refreshSubtaskList(task, subtasksList, subtaskCountElement);
+            // send to api
+            fetch('/tasks', {
+                method: 'POST',
+                body: JSON.stringify({
+                    data: {
+                        tasks: tasks
+                    }
+                }),
+            })
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.errors) {
+                    errorsNode.innerHTML += '<div>' + json.errors + '</div>';
+                    return;
+                }
+                tasks = json.data.tasks;
+
+                // clear form
+                subtaskForm.reset();
+
+                // refresh subtask list after subtask was added
+                refreshSubtaskList(i, subtasksList, subtasksCountElement);
+            });
         });
 
-        refreshSubtaskList(task, subtasksList, subtaskCountElement);
+        // refresh subtask list when adding the task to the task list
+        refreshSubtaskList(i, subtasksList, subtasksCountElement);
 
+        // actually display task
         tasksDiv.appendChild(taskTemplate);
+
+        // only clean task label in task form, keep createdBy and assignee
         taskFormLabel.value = '';
     }
 };
 
-const refreshSubtaskList = (task, subtasksList, subtaskCountElement) => {
-    subtaskCountElement.innerText = task.subtasks.length;
+// a function to refresh subtask list for a single task
+const refreshSubtaskList = (i, subtasksList, subtasksCountElement) => {
+    // display count
+    subtasksCountElement.innerText = tasks[i].subtasks.length;
 
+    // clear and rewrite subtasks
     subtasksList.innerHTML = '';
-    for (let subtask of task.subtasks) {
+    for (let subtask of tasks[i].subtasks) {
         let subtaskTemplate = document.importNode(subtaskTemplateElement.content, true);
         let subtaskTemplateLabel = subtaskTemplate.querySelector('span.subtask-value-label');
         subtaskTemplateLabel.innerText = subtask;
 
+        // handle subtask remove icon
         let removeIcon = subtaskTemplate.querySelector('.subtask-remove-icon');
         removeIcon.addEventListener('click', (e) => {
-            task.subtasks.splice(task.subtasks.indexOf(subtask), 1);
+            tasks[i].subtasks.splice(tasks[i].subtasks.indexOf(subtask), 1);
             e.target.parentElement.remove();
-            subtaskCountElement.innerText = task.subtasks.length;
+
+            // send to api
+            fetch('/tasks', {
+                method: 'POST',
+                body: JSON.stringify({
+                    data: {
+                        tasks: tasks
+                    },
+                }),
+            })
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.errors) {
+                    errorsNode.innerHTML += '<div>' + json.errors + '</div>';
+                    return;
+                }
+                tasks = json.data.tasks;
+
+                // refresh subtask list after subtask was added
+                subtasksCountElement.innerText = tasks[i].subtasksCount;
+            });
         });
 
         subtasksList.appendChild(subtaskTemplate);

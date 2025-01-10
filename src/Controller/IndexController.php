@@ -41,6 +41,11 @@ class IndexController extends AbstractController
         $tasksOrganizer = new TasksOrganizer();
         foreach ($payload['data']['tasks'] as $jsonTask) {
             $task = new Task($jsonTask['label'] ?? '', $jsonTask['createdBy'] ?: '', $jsonTask['assignee'] ?? '', $jsonTask['createdAt'] ?? '');
+
+            foreach ($jsonTask['subtasks'] as $subtask) {
+                $task->addSubtask($subtask);
+            }
+
             $errors = $validator->validate($task);
 
             if (count($errors) > 0) {
