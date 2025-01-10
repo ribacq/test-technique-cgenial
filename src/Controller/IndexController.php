@@ -13,12 +13,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class IndexController extends AbstractController
 {
+    // render client page
     #[Route('/', name: 'app_index')]
     public function index(): Response
     {
         return $this->render('index/index.html.twig');
     }
 
+    // POST /tasks receives tasks as json, returns them again with an added field subtasksCount
     #[Route('/tasks', name: 'app_index_create_task', methods: 'POST')]
     public function createTask(Request $request, ValidatorInterface $validator): JsonResponse
     {
@@ -29,7 +31,6 @@ class IndexController extends AbstractController
                 'errors' => 'json transmis vide ou invalide',
             ], Response::HTTP_BAD_REQUEST);
         }
-
         if (empty($payload['data']['tasks'])) {
             return $this->json([
                 'errors' => 'aucune tâche transmises',

@@ -4,8 +4,12 @@ namespace App\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Task class
+ */
 class Task
 {
+    // we use Assert\Length to validate Task fields
     #[Assert\Length(min: 1, max: 255, minMessage: 'intitulé ne peut être vide', maxMessage: 'intitulé ne peut dépasser 255 caractères')]
     private string $label;
 
@@ -53,6 +57,7 @@ class Task
         return $this->subtasks;
     }
 
+    // subtasks are counted in Task instead of TasksOrganizer since this is a very simple operation
     public function getSubtasksCount(): int
     {
         return count($this->subtasks);

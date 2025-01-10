@@ -4,6 +4,9 @@ namespace App\Service;
 
 use App\Entity\Task;
 
+/**
+ * TasksOrganizer is a simple service converting an array of Task objects to a PHP array with added field subtasksCount for each task
+ */
 class TasksOrganizer
 {
     private array $tasks = [];
