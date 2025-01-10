@@ -1,0 +1,67 @@
+/* 7 minimalist css lines taken from: bettermotherfuckingwebsite.com */
+body {
+    margin: 40px auto;
+    max-width: 850px;
+    line-height: 1.6;
+    font-size: 18px;
+    color: #444;
+    padding:0 10px;
+}
+
+h1, h2, h3 {
+    line-height: 1.2
+}
+
+/* .task-form */
+form#task-form label.form-row {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    margin-top: 18px;
+    border-bottom: 1px dotted #888;
+}
+
+form#task-form label.form-row input {
+    flex: 0 0 40%;
+    margin-left: 5%;
+}
+
+/* .subtask-form */
+form.subtask-form {
+    display: flex;
+    flex-grow: row nowrap;
+    justify-content: space-between;
+}
+
+form.subtask-form input {
+    flex: 1 0 40%;
+}
+
+form.subtask-form button {
+    flex: 0 0 20%;
+    margin-right: 5%;
+}
+
+/* .task-card */
+.task-card {
+    margin-top: 18px;
+}
+
+.task-card-header {
+    background: #444;
+    color: #eee;
+    padding: 8px;
+    border-radius: 6px 18px 0 0;
+}
+
+.task-card-body {
+    padding: 8px;
+    border-radius: 0 0 6px 18px;
+    border: 1px dotted #444;
+    border-top: none;
+}
+
+/* subtask */
+.subtask-remove-icon {
+    cursor: pointer;
+}

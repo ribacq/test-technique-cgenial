@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" type="text/css" href="assets/style.css"></style>
+{% endblock %}
+
+{% block title %}Tâches{% endblock %}
+
+{% block body %}
+<main>
+    <h1>Tâches</h1>
+
+    <section>
+        <article>
+            <h2>Nouvelle tâche</h2>
+            <form id="task-form" method="post">
+                <label class="form-row">* Intitulé
+                    <input type="text" name="label" minlength="1" maxlength="255" placeholder="combattre le crime">
+                </label>
+
+                <label class="form-row">* Créateur·ice (votre nom)
+                    <input type="text" name="created-by" minlength="1" maxlength="255" placeholder="Alice">
+                </label>
+
+                <label class="form-row">* Assignée à
+                    <input type="text" name="assignee" minlength="1" maxlength="255" placeholder="Bob">
+                </label>
+
+                <p class="errors"></p>
+                <p>Les champs précédés d'une astérisque * sont obligatoires.</p>
+
+                <button type="submit">Ajouter</button>
+            </form>
+        </article>
+
+        <article>
+            <h2>En attente</h2>
+            <div>
+                Trier les tâches par nombre de sous-tâches :
+                <button id="task-sort-asc">croissant</button>
+                <button id="task-sort-desc">décroissant</button>
+            </div>
+            <div id="tasks"></div>
+        </article>
+    </section>
+
+    <template id="task-template">
+        <div class="task-card">
+            <div class="task-card-header">
+                <span class="task-value-label"></span>
+            </div>
+            <div class="task-card-body">
+                <div class="task-details">
+                    <span class="task-detail">assignée à
+                        <span class="task-value-assignee"></span>
+                    </span>
+                    
+                    <span class="task-detail">par
+                        <span class="task-value-created-by"></span>
+                    </span>
+
+                    <span class="task-detail">le 
+                        <span class="task-value-created-at"></span>
+                    </span>
+                </div>
+                <hr>
+                <div class="subtasks">
+                    <div><span class="subtask-count"></span> sous-tâche(s)</div>
+                    <form class="subtask-form" method="post">
+                        <button type="submit">Ajouter</button>
+                        <input type="text" name="subtask-label" minlength="1" maxlength="255" placeholder="étape 1...">
+                    </form>
+                    <p class="errors"></p>
+                    <ol class="subtasks-list"></ol>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="subtask-template">
+        <li><span class="subtask-value-label"></span> <span class="subtask-remove-icon">❌</span></li>
+    </template>
+</main>
+{% endblock %}
+
+{% block javascripts %}
+<script type="text/javascript" src="assets/main.js"></script>
+{% endblock %}
