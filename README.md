@@ -63,3 +63,5 @@ Pour finir, lancer le projet :
 ```bash
 symfony server:start
 ```
+
+Le projet est accessible en web via votre navigateur, habituellement via l'URL http://localhost:8000
