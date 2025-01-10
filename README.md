@@ -1,5 +1,5 @@
 # test-technique-cgenial
-Quentin RIBAC, mercredi 8 janvier 2025, licence MIT.
+Quentin RIBAC, 8-10 janvier 2025, licence MIT.
 
 Ce dépôt contient ma réalisation, code et documentation, du test technique demandé par la [Fondation CGénial](https://www.cgenial.org/) pour ma candidature au poste de _développeur PHP/JS fullstack_.
 
